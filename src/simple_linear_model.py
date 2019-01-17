@@ -49,7 +49,7 @@ if __name__ == '__main__':
     flat_img_size = X_train.shape[1] # flat image size
 
     seed = 10
-    num_epochs = 20
+    num_epochs = 1000
     mini_batch_size = 100
     learning_rate = 0.0001
     print('[INFO] seed = ', seed)
@@ -73,14 +73,16 @@ if __name__ == '__main__':
     # correct_prediction = tf.equal(tf.argmax(Z),tf.argmax(Y))
     # # Calculate accuracy on the test set
     # accuracy = tf.reduce_mean(tf.cast(correct_prediction, 'float'))
-    predicted_y = tf.argmax(Z, axis=1); # index of the largest element in each row
+    predicted_Y = tf.argmax(Z, axis=1); # index of the largest element in each row
 
     init = tf.global_variables_initializer()
 
     costs=[]
     with tf.Session() as sess:
+        print('[INFO] Initialize Variables ',end='')
         sess.run(init)
-        print('[INFO] Initialize Variables . Done !')
+        print('Done!')
+        print('\n[INFO] Training ... ')
 
         for epoch in range(num_epochs):
             epoch_cost = 0.0
@@ -101,20 +103,22 @@ if __name__ == '__main__':
 
             if epoch % 100 == 0:
                 print('[INFO] Cost after epoch %i : %.3f' % (epoch, epoch_cost))
-                costs.append(epoch_cost)
+            costs.append(epoch_cost)
+
+        print('[INFO] Training .Done!\n')
 
         # save the params{'w':w, 'b':b}
         params = sess.run(params)
+        save_parameters('simple_linear_model.pickle',params)
 
-        # print('[INFO] Train Accuracy: ', accuracy.eval({X:X_train, Y:Y_train}))
-        # print('[INFO] Test Accuracy: ', accuracy.eval({X:X_test, Y:Y_test}))
-
-        # correct_test, acc = sess.run([correct_prediction, accuracy],
-        #                          feed_dict={X:X_test,Y:Y_test})
-        # print('[INFO] correct_test ', correct_test.shape, correct_test)
-        # print('[INFO] Accuracy ', acc)
-
-        predicted_y = sess.run(predicted_y,
+        predicted_Y = sess.run(predicted_Y,
                                feed_dict={X:X_test,Y:Y_test})
 
-        print('[INFO] Predicted y', predicted_y.shape, predicted_y)
+    accuracy = calc_accuracy(Y_test_raw ,predicted_Y,
+                            show_false_predictions=True,
+                            X=X_test_raw)
+    print('[INFO] Accuracy',accuracy)
+
+    plot_weights(params['W'].T,np.unique(Y_test_raw),size=X_train_raw.shape[1:])
+
+    plot_cost(costs,learning_rate)

@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 import idx2numpy
 import math
+import pickle
 
 #--------------------------------
 print('[INFO] Tensorflow version : ' , tf.__version__)
@@ -112,21 +113,52 @@ def plot_cost(costs, learning_rate):
     plt.title('Learning rate = '+str(learning_rate))
     plt.show()
 
-def calc_accuracy(y,predicted_y):
+def calc_accuracy(y,predicted_y,
+                  show_false_predictions = True,  # if show false prediction
+                  num_images = 3,
+                  X = None):
     '''
-        Args
-
+        Args:
+            y: raw y
+            predicted_y: raw predicted y
+        Returns
+            accuracy
     '''
+    equal_inds = np.equal(y,predicted_y)
+    accuracy = y[equal_inds].shape[0] / y.shape[0]
+    if show_false_predictions:
+        if X is None:
+            print('[ERROR] X is None !')
+            return 0.0
+        # get false predictions
+        equal_inds = (equal_inds == False)
+        plot_y = y[equal_inds]
+        plot_predicted_y = predicted_y[equal_inds]
+        plot_X = X[equal_inds]
+        show_some_images(plot_X,plot_y,plot_predicted_y,num_images = num_images)
+    return accuracy
 
-def plot_weights(ws,labels,sz=(40,40)):
+def plot_weights(ws,labels,size=(40,40)):
     '''
         ws : weights
         labels : label (in text)
     '''
+    w_min = np.min(ws)
+    w_max = np.max(ws)
     for i in range(ws.shape[0]):
-        plt.plot(w[i,:].imshow(sz))
+        plt.imshow(ws[i,:].reshape(size), vmin=w_min, vmax=w_max, cmap='seismic')
         plt.title('Class ' + str(labels[i]))
         plt.show()
+
+def save_parameters(file_name,parameters):
+    print('[INFO] Saved to file ',file_name)
+    with open('../model'+'/'+file_name,'wb') as f:
+        pickle.dump(parameters, f)
+
+def load_parameters(file_name):
+    with open('../model'+'/'+file_name,'rb') as f:
+        return pickle.load(f)
+
 
 if __name__ == '__main__':
     print('[WARNING] Do not run this file! Just import this file and use !')
