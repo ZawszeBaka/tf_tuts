@@ -7,6 +7,9 @@ import idx2numpy
 import math
 
 #--------------------------------
+print('[INFO] Tensorflow version : ' , tf.__version__)
+print('[INFO] OpenCV version : ', cv2.__version__,end ='\n\n')
+
 def get_dataset(show_info=False):
     '''
         Get datasets MNIST
@@ -112,7 +115,7 @@ def plot_cost(costs, learning_rate):
 def calc_accuracy(y,predicted_y):
     '''
         Args
-            
+
     '''
 
 def plot_weights(ws,labels,sz=(40,40)):
@@ -124,3 +127,6 @@ def plot_weights(ws,labels,sz=(40,40)):
         plt.plot(w[i,:].imshow(sz))
         plt.title('Class ' + str(labels[i]))
         plt.show()
+
+if __name__ == '__main__':
+    print('[WARNING] Do not run this file! Just import this file and use !')

@@ -1,12 +1,9 @@
 import helper_functions
 from helper_functions import *
 
-print('[INFO] Tensorflow version : ' , tf.__version__)
-print('[INFO] OpenCV version : ', cv2.__version__)
-
 '''
 
-    1 laYer
+    1 layer
 
     Input:
         "None" is number of training samples
@@ -117,7 +114,7 @@ if __name__ == '__main__':
         # print('[INFO] correct_test ', correct_test.shape, correct_test)
         # print('[INFO] Accuracy ', acc)
 
-        predicted_y = sess.run([predicted_y],
-                               feed_dict={X:X_test,Y:Y_test})[0]
+        predicted_y = sess.run(predicted_y,
+                               feed_dict={X:X_test,Y:Y_test})
 
         print('[INFO] Predicted y', predicted_y.shape, predicted_y)
