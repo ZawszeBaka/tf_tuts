@@ -26,19 +26,32 @@ def get_dataset(show_info=False):
 
     return X_train, y_train, X_test, y_test
 
-def show_some_images(X,y,predicted_y=None, num_images = 3):
+def show_some_images(X,y,predicted_y=None, subplot=(3,3)):
     '''
         Args
             X : can be X_train or X_test
             y : can be y_train or y_test
+            subplot: 3 x 3
     '''
-    for i in range(num_images):
-        plt.imshow(X[i])
+
+    fig, axes = plt.subplots(subplot[0],subplot[1])
+    fig.subplots_adjust(hspace=0.3, wspace=0.3)
+
+    for i, ax in enumerate(axes.flat):
+        ax.imshow(X[i],cmap='binary')
+
         if predicted_y is not None:
-            plt.title('Actual class : '+str(y[i])+' , Predicted class : '+str(predicted_y[i]))
+            xlabel = 'Actual:'+str(y[i])+',Predicted:'+str(predicted_y[i])
         else:
-            plt.title('Actual class : '+str(y[i]))
-        plt.show()
+            xlabel = 'Actual:'+str(y[i])
+
+        ax.set_xlabel(xlabel)
+
+        # Remove ticks from the plot
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    plt.show()
 
 def one_hot_encoding(y, num_classes, axis=1):
     '''
@@ -135,20 +148,44 @@ def calc_accuracy(y,predicted_y,
         plot_y = y[equal_inds]
         plot_predicted_y = predicted_y[equal_inds]
         plot_X = X[equal_inds]
-        show_some_images(plot_X,plot_y,plot_predicted_y,num_images = num_images)
+        show_some_images(plot_X,plot_y,plot_predicted_y, subplot=(3,3))
     return accuracy
 
-def plot_weights(ws,labels,size=(40,40)):
+def plot_weights(ws,labels,size=(40,40),subplot=(3,4)):
     '''
-        ws : weights
+        ws : weights  [ [weight1],
+                        [weight2],...]
         labels : label (in text)
+        subplot : 3 x 4
     '''
+    # Get the lowest and highest values for the weights
+    # This is used to correct the colour intensity across
+    # the images so they can be compared with each other
     w_min = np.min(ws)
     w_max = np.max(ws)
-    for i in range(ws.shape[0]):
-        plt.imshow(ws[i,:].reshape(size), vmin=w_min, vmax=w_max, cmap='seismic')
-        plt.title('Class ' + str(labels[i]))
-        plt.show()
+
+    # Create figure with 3x4 sub-plots
+    # where the last 2 sub-plots are unused
+    fig, axes = plt.subplots(subplot[0],subplot[1])
+    fig.subplots_adjust(hspace=0.3, wspace=0.3)
+
+    for i, ax in enumerate(axes.flat):
+        # Only use the weights for the first 10 sub-plots
+        if i < labels.shape[0]:
+            img = ws[i,:].reshape(size)
+
+            # set the label for the sub-plot
+            ax.set_xlabel('Weight {0}'.format(labels[i]))
+
+            # plot the image
+            ax.imshow(img, vmin=w_min, vmax=w_max, cmap='seismic')
+
+        # Remove ticks from each sub-plot
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    # show
+    plt.show()
 
 def save_parameters(file_name,parameters):
     print('[INFO] Saved to file ',file_name)

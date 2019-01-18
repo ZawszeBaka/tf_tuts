@@ -49,10 +49,13 @@ if __name__ == '__main__':
     flat_img_size = X_train.shape[1] # flat image size
 
     seed = 10
-    num_epochs = 1000
+    num_epochs = 10
     mini_batch_size = 100
     learning_rate = 0.0001
-    print('[INFO] seed = ', seed)
+    print('[INFO] Seed = ', seed)
+    print('[INFO] Num epochs = ', num_epochs)
+    print('[INFO] Mini batch size = ', mini_batch_size)
+    print('[INFO] Learning rate = ', learning_rate)
 
     # Creating placeholder variables
     X = tf.placeholder(tf.float32, shape=(None, flat_img_size), name='X') # type, shape
@@ -109,7 +112,10 @@ if __name__ == '__main__':
 
         # save the params{'w':w, 'b':b}
         params = sess.run(params)
-        save_parameters('simple_linear_model.pickle',params)
+        model = dict()
+        model['params'] = params
+        model['costs'] = costs
+        save_parameters('simple_linear_model.pickle',model)
 
         predicted_Y = sess.run(predicted_Y,
                                feed_dict={X:X_test,Y:Y_test})
