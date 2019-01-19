@@ -39,7 +39,6 @@ if __name__ == '__main__':
     X_test = flatting(X_test_raw)   # after flatting
     Y_test = one_hot_encoding(Y_test_raw, num_classes) # after one hot encoding
 
-
     print('[INFO] X train', X_train.shape)
     print('[INFO] Y train ', Y_train.shape)
     print('[INFO] X test', X_test.shape)
@@ -115,6 +114,8 @@ if __name__ == '__main__':
         model = dict()
         model['params'] = params
         model['costs'] = costs
+        model['learning_rate'] = learning_rate
+        model['num_epochs'] = num_epochs
         save_parameters('simple_linear_model.pickle',model)
 
         predicted_Y = sess.run(predicted_Y,
@@ -125,6 +126,6 @@ if __name__ == '__main__':
                             X=X_test_raw)
     print('[INFO] Accuracy',accuracy)
 
-    plot_weights(params['W'].T,np.unique(Y_test_raw),size=X_train_raw.shape[1:])
+    plot_weights(params['W'],np.unique(Y_test_raw),size=X_train_raw.shape[1:])
 
     plot_cost(costs,learning_rate)
