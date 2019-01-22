@@ -340,7 +340,7 @@ def plot_confusion_matrix(y,predicted_y,num_classes):
 
     plt.show()
 
-def plot_conv_weights(weights, input_channel=0):
+def plot_conv_weights(w, input_channel=0):
     '''
     Assume weights are Tensorflow ops for 4-dim variables
     e.g. weights_conv1 or weights_conv2
@@ -367,14 +367,14 @@ def plot_conv_weights(weights, input_channel=0):
         if i < num_filters:
             img = w[:,:,input_channel,i]
             ax.imshow(img,vmin=w_min, vmax=w_max,
-                      interpolation='neareast', cmap='seismic')
+                      interpolation='nearest', cmap='seismic')
         # Remove ticks from the plot
         ax.set_xticks([])
         ax.set_yticks([])
 
     plt.show()
 
-def plot_conv_layer(layer,image):
+def plot_conv_layer(layer,image,title=''):
     '''
     Arg
         layer : Tensorflow op that outputs a 4-dim tensor
@@ -404,9 +404,37 @@ def plot_conv_layer(layer,image):
         ax.set_xticks([])
         ax.set_yticks([])
 
+    fig.suptitle(title, fontsize=16)
+
     plt.show()
 
+def plot_conv_output(values):
+    '''
+        output_conv1 = K.function(inputs=[layer_input.input],
+                                  outputs=[layer_conv1.output])
+        layer_output1 = output_conv1([[X_test_raw[0,:,:]]])[0]
+    '''
+    # Number of filters used in the conv.layer
+    num_filters = values.shape[3]
 
+    # Number of grids to plot
+    # Rounded-up, square-root of the number of filters
+    num_grids = math.ceil(math.sqrt(num_filters))
+
+    # Create figure with a grid of sub-plots
+    fig, axes = plt.subplots(num_grids,num_grids)
+
+    # Plot the output images of all the filters
+    for i, ax in enumerate(axes.flat):
+        if i < num_filters:
+            # channel, height, width, image indices
+            img = values[0,:,:,i]
+            ax.imshow(img, interpolation='nearest', cmap='binary')
+        # Remove ticks from the plot
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    plt.show()
 
 
 
